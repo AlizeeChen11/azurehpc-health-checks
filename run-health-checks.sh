@@ -91,9 +91,9 @@ done
 
 function collect_meta_data(){
     # get meta data for VM and underlying host
-    pHostName=$(python3 ${AZ_NHC_ROOT}/getPhysHostName.py)
-    computerName=$(echo $pHostName| awk '{print $1}')
-    physHostName=$(echo $pHostName| awk '{print $4}')
+   # pHostName=$(python3 ${AZ_NHC_ROOT}/getPhysHostName.py)
+   # computerName=$(echo $pHostName| awk '{print $1}')
+    physHostName=$(cat /var/lib/hyperv/.kvp_pool_3 | tr -s '\000' ' ' | awk '{print $2}')
     vmhostname=$(hostname)
     vmid=$( curl -H Metadata:true --max-time 10 -s  "http://169.254.169.254/metadata/instance/compute/vmId?api-version=2021-03-01&format=text")
     vm_name=$(curl -H Metadata:true --max-time 10 -s "http://169.254.169.254/metadata/instance/compute/name?api-version=2021-11-15&format=text")
@@ -128,11 +128,11 @@ if [ -z "$CONF_FILE" ]; then
     fi
 
     #add accelerated network if applicable, when using the default conf files, skip if an explicit conf file is specified
-    acc_file=$CONF_FILE
-    acc_net=$(ibstatus mlx5_an0 2>/dev/null)
-    if [ $? -eq 0 ] && [ -n "$an_rate" ] && ! grep -q 'mlx5_an0:1' "$acc_file"; then
-        echo -e "\n\n### Accelerate network check\n * || check_hw_ib $an_rate  mlx5_an0:1\n * || check_hw_eth eth1" >> $acc_file
-    fi
+#    acc_file=$CONF_FILE
+#   acc_net=$(ibstatus mlx5_an0 2>/dev/null)
+#   if [ $? -eq 0 ] && [ -n "$an_rate" ] && ! grep -q 'mlx5_an0:1' "$acc_file"; then
+#       echo -e "\n\n### Accelerate network check\n * || check_hw_ib $an_rate  mlx5_an0:1\n * || check_hw_eth eth1" >> $acc_file
+#  fi
 fi
 
 CONF_FILE=$(realpath -e "$CONF_FILE")
@@ -173,7 +173,7 @@ collect_meta_data
 cat <<EOF >> $OUTPUT_PATH
 ------ VM Meta Data ------
 VM NAME: $vm_name
-COMPUTER NAME: $computerName
+# COMPUTER NAME: $computerName
 VM HOST NAME: $vmhostname
 VM ID: $vmid
 VM SKU: standard_${SKU}
