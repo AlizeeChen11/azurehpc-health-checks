@@ -91,9 +91,9 @@ done
 
 function collect_meta_data(){
     # get meta data for VM and underlying host
-    pHostName=$(python3 ${AZ_NHC_ROOT}/getPhysHostName.py)
-    computerName=$(echo $pHostName| awk '{print $1}')
-    physHostName=$(echo $pHostName| awk '{print $4}')
+  #  pHostName=$(python3 ${AZ_NHC_ROOT}/getPhysHostName.py)
+  #  computerName=$(echo $pHostName| awk '{print $1}')
+    physHostName=$(cat /var/lib/hyperv/.kvp_pool_3 | tr -s '\000' ' ' | awk '{print $2}')
     vmhostname=$(hostname)
     vmid=$( curl -H Metadata:true --max-time 10 -s  "http://169.254.169.254/metadata/instance/compute/vmId?api-version=2021-03-01&format=text")
     vm_name=$(curl -H Metadata:true --max-time 10 -s "http://169.254.169.254/metadata/instance/compute/name?api-version=2021-11-15&format=text")
