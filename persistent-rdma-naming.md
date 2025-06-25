@@ -1,5 +1,5 @@
 # Install Persistent RDMA naming
-This document walks through the steps to setup RDMA persostent device naming.
+This document walks through the steps to setup RDMA persistent device naming.
 
 ## Build rdma-core
 Run below commands to build rdma-core:
