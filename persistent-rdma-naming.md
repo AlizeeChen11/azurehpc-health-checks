@@ -101,5 +101,6 @@ mlx5_ib7 port 1 ==> ib7 (Up)
 ```
 ## Install RMDA naming monitoring:
 ```
-install_azure_persistent_rdma_naming_monitor.sh
+# referred https://github.com/Azure/azhpc-images/blob/master/common/install_azure_persistent_rdma_naming_monitor.sh
+# need to make some format changes to the file.
 ```
