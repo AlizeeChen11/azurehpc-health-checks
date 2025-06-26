@@ -1,7 +1,13 @@
 # Install Persistent RDMA naming
 This document walks through the steps to setup RDMA persistent device naming.
 
-## Build rdma-core
+## Referred:
+```
+https://github.com/Azure/azhpc-images/blob/master/common/install_azure_persistent_rdma_naming.sh
+https://github.com/Azure/azhpc-images/blob/master/common/install_azure_persistent_rdma_naming_monitor.sh
+```
+
+### Build rdma-core
 Run below commands to build rdma-core:
 ```
 wget https://github.com/linux-rdma/rdma-core/archive/refs/tags/v56.2.tar.gz
@@ -12,7 +18,7 @@ bash build.sh
 sudo cp build/bin/rdma_rename /usr/sbin/rdma_rename_56.2
 ```
 
-## Setup systemd service
+### Setup systemd service
 Follow below steps to setup systemd service:
 
 ```
@@ -99,8 +105,59 @@ mlx5_ib5 port 1 ==> ib5 (Up)
 mlx5_ib6 port 1 ==> ib6 (Up)
 mlx5_ib7 port 1 ==> ib7 (Up)
 ```
-## Install RMDA naming monitoring:
+### Install RMDA naming monitoring
+Please note that this one is optional.
+```
+vi /usr/sbin/azure_persistent_rdma_naming_monitor.sh
+```
+Enter below content:
 ```
 # referred https://github.com/Azure/azhpc-images/blob/master/common/install_azure_persistent_rdma_naming_monitor.sh
 # need to make some format changes to the file.
+#!/bin/bash
+
+# monitoring service to check that hca_id's are named correctly
+# if incorrect, restart azure_persistent_rdma_naming.service
+
+while true; do 
+
+    for device in $(ibdev2netdev -v | sort -n | cut -f2 -d' '); do
+        
+	link_layer=$(ibv_devinfo -d $device | grep -i 'link_layer' | awk -F: '{gsub(/^[ \t]+/, "", $2); print $2}')
+
+        if [[ $device != *"an"* && $device != *"ib"* ]]; then 
+            systemctl enable azure_persistent_rdma_naming.service
+            systemctl restart azure_persistent_rdma_naming.service
+            sleep 60
+            break
+        fi
+        
+    done
+
+    sleep 60 
+
+done
 ```
+Then run:
+```
+chmod 755 /usr/sbin/azure_persistent_rdma_naming_monitor.sh
+cat <<EOF >/etc/systemd/system/azure_persistent_rdma_naming_monitor.service
+[Unit]
+Description=Azure persistent RDMA naming Monitor
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/azure_persistent_rdma_naming_monitor.sh
+RemainAfterExit=true
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable azure_persistent_rdma_naming_monitor.service
+systemctl start azure_persistent_rdma_naming_monitor.service
+systemctl status azure_persistent_rdma_naming_monitor.service
+```
+
