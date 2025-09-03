@@ -106,7 +106,6 @@ mlx5_ib6 port 1 ==> ib6 (Up)
 mlx5_ib7 port 1 ==> ib7 (Up)
 ```
 ### Install RMDA naming monitoring
-Please note that this one is optional.
 ```
 vi /usr/sbin/azure_persistent_rdma_naming_monitor.sh
 ```
