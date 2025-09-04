@@ -40,7 +40,62 @@ elsah100:176:302 [1] NCCL INFO NET/IB : GPU Direct RDMA Enabled for HCA 1 'mlx5_
 elsah100:176:302 [1] graph/xml.h:85 NCCL WARN Attribute busid of node nic not found
 
 ```
-To resolve this, we have to remove nic from mlx5_x.
+To resolve this, we ran naming change script to keep persistent nic naming:https://github.com/Azure/azhpc-images/blob/master/common/install_azure_persistent_rdma_naming.sh:
+```
+bash run-health-checks.sh
+
+root@elsah100:/azure-nhc# exit               bash run-health-checks.sh 
+No custom conf file specified, detecting VM SKU...
+Running health checks for Standard_nd96isr_h100_v5 SKU...
+Running health checks using /home/azureuser/azurehpc-health-checks/conf/nd96isr_h100_v5.conf and outputting to /home/azureuser/azurehpc-health-checks/health.log
+[sudo] password for azureuser: 
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.4.1
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+SUCCESS:  nhc:  Health check passed:  check_hw_topology: Topology passed check against /azure-nhc/topofiles/ndv5-topo.xml
+SUCCESS:  nhc:  Health check passed:  check_gpu_count: Expected 8 and found 8
+SUCCESS:  nhc:  Health check passed:  check_nvsmi_healthmon: nvidia-smi completed successfully
+SUCCESS:  nhc:  Health check passed:  check_gpu_xid:  GPU XID error check passed.
+SUCCESS:  nhc:  Health check passed:  check_nvBW_gpu_bw: GPU bandwidth Tests with NVBandwidth passed
+SUCCESS:  nhc:  Health check passed:  check_gpu_bw: GPU Bandwidth Tests Passed
+SUCCESS:  nhc:  Health check passed:  check_gpu_ecc: ECC checks passed
+SUCCESS:  nhc:  Health check passed:  check_nccl_allreduce: NCCL all reduce bandwidth test passed, 480.318 GB/s
+SUCCESS:  nhc:  Health check passed:  
+SUCCESS:  nhc:  Health check passed:  
+SUCCESS:  nhc:  Health check passed:  
+SUCCESS:  nhc:  Health check passed:  
+SUCCESS:  nhc:  Health check passed:  
+SUCCESS:  nhc:  Health check passed:  
+SUCCESS:  nhc:  Health check passed:  
+SUCCESS:  nhc:  Health check passed:  
+SUCCESS:  nhc:  Health check passed:  check_ib_bw_gdr: IB write bandwidth test IB_WRITE_BW passed for IB=mlx5_ib0, IB BW=392.82 Gbps
+SUCCESS:  nhc:  Health check passed:  check_ib_bw_gdr: IB write bandwidth test IB_WRITE_BW passed for IB=mlx5_ib3, IB BW=392.97 Gbps
+SUCCESS:  nhc:  Health check passed:  check_ib_bw_gdr: IB write bandwidth test IB_WRITE_BW passed for IB=mlx5_ib4, IB BW=392.90 Gbps
+SUCCESS:  nhc:  Health check passed:  check_ib_bw_gdr: IB write bandwidth test IB_WRITE_BW passed for IB=mlx5_ib6, IB BW=392.99 Gbps
+SUCCESS:  nhc:  Health check passed:  check_ib_bw_gdr: IB write bandwidth test IB_WRITE_BW passed for IB=mlx5_ib1, IB BW=392.92 Gbps
+SUCCESS:  nhc:  Health check passed:  check_ib_bw_gdr: IB write bandwidth test IB_WRITE_BW passed for IB=mlx5_ib2, IB BW=393.01 Gbps
+SUCCESS:  nhc:  Health check passed:  check_ib_bw_gdr: IB write bandwidth test IB_WRITE_BW passed for IB=mlx5_ib7, IB BW=392.93 Gbps
+SUCCESS:  nhc:  Health check passed:  check_ib_bw_gdr: IB write bandwidth test IB_WRITE_BW passed for IB=mlx5_ib5, IB BW=392.94 Gbps
+SUCCESS:  nhc:  Health check passed:  check_ib_link_flapping: No IB link flapping found
+Health checks completed with exit code: 0.
+
+
+```
+
+
+
 
 
 
