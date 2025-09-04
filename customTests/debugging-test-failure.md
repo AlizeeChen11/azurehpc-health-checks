@@ -155,8 +155,8 @@ memcpy CE GPU(row) -> GPU(column) bandwidth (GB/s)
 SUM device_to_device_memcpy_read_ce 20785.58
 ```
 
-Additional tests to verify:
-````
+Additional stuff to verify:
+```
 Check GPU and nvlink status:
 nvidia-smi
 nvidia-smi nvlink -s
