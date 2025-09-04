@@ -14,6 +14,9 @@ Health checks completed with exit code: 1.
 Run below test inside container:
 ```
 /opt/openmpi/bin/mpirun -np 8  --map-by ppr:8:node -bind-to numa -mca coll_hcoll_enable 0 --allow-run-as-root -x LD_LIBRARY_PATH=/azure-nhc/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/opt/openmpi/lib -x NCCL_IB_PCI_RELAXED_ORDERING=1 -x UCX_IB_PCI_RELAXED_ORDERING=on -x UCX_TLS=tcp -x UCX_NET_DEVICES=eth0 -x CUDA_DEVICE_ORDER=PCI_BUS_ID -x NCCL_SOCKET_IFNAME=eth0 -x NCCL_TOPO_FILE=/azure-nhc/topofiles/ndv5-topo.xml /opt/nccl-tests/build/all_reduce_perf -b 16G -f 2 -g 1 -e 16G -c 1
+
+# if needed, add debug parameters:
+-x NCCL_DEBUG=INFO -x NCCL_DEBUG_SUBSYS=INIT,NET
 ```
 I can get below detailed error mesage. This is due to mlx5_1 is NIC device. The mpirun test uses mlx_1 devices.
 ```
