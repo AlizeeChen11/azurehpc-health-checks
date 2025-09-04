@@ -96,6 +96,64 @@ Health checks completed with exit code: 0.
 
 
 ```
+## Scenario 2:  check_gpu_bw failed
+Failure message:
+```
+Last error:
+Call to ibv_reg_dmabuf_mr failed with error Cannot allocate memory
+ERROR:  nhc:  Health check failed:  check_gpu_bw: P2P test on GPU 1 to GPU 0 failed. Bandwidth 162.45 is less than 335. FaultCode: NHC2020
+```
+
+What does "check_gpu_bw" do?
+It actually runs the customTests/azure_gpu_bandwidth.nhc script. 
+The script runs NVBandwidth with 3 different test cases:
+```
+H2D="host_to_device_memcpy_ce"
+D2H="device_to_host_memcpy_ce"
+P2P="device_to_device_memcpy_read_ce"
+```
+The failure message shows the test failed case is P2P test between GPU, this in respects to "device_to_device_memcpy_read_ce". So we can manually run the test in container:
+```
+sudo docker run --name=aznhc --net=host --rm --gpus all --privileged --shm-size=8g -it mcr.microsoft.com/aznhc/aznhc-nv bash
+./nvbandwidth -t device_to_device_memcpy_read_ce
+```
+
+The expected result is as below:
+```
+root@elsah100:/azure-nhc/bin# ./nvbandwidth -t device_to_device_memcpy_read_ce
+nvbandwidth Version: v0.4
+Built from Git version: v0.4.2-12-g8857188
+
+NOTE: This tool reports current measured bandwidth on your system.
+Additional system-specific tuning may be required to achieve maximal peak bandwidth.
+
+CUDA Runtime Version: 12020
+CUDA Driver Version: 12080
+Driver Version: 570.133.20
+
+Device 0: NVIDIA H100 80GB HBM3
+Device 1: NVIDIA H100 80GB HBM3
+Device 2: NVIDIA H100 80GB HBM3
+Device 3: NVIDIA H100 80GB HBM3
+Device 4: NVIDIA H100 80GB HBM3
+Device 5: NVIDIA H100 80GB HBM3
+Device 6: NVIDIA H100 80GB HBM3
+Device 7: NVIDIA H100 80GB HBM3
+
+Running device_to_device_memcpy_read_ce.
+memcpy CE GPU(row) -> GPU(column) bandwidth (GB/s)
+          0         1         2         3         4         5         6         7
+0       N/A    370.90    370.90    370.90    370.38    370.64    370.26    371.67
+1    370.90       N/A    370.90    370.90    371.67    370.90    370.38    371.67
+2    372.05    370.90       N/A    370.90    372.96    370.38    371.67    371.67
+3    370.90    372.05    372.05       N/A    371.79    371.02    370.77    370.90
+4    370.38    371.54    370.38    371.02       N/A    372.05    370.90    370.90
+5    371.02    370.51    371.92    372.18    370.90       N/A    372.05    370.90
+6    371.41    371.79    371.67    370.38    370.90    372.05       N/A    370.90
+7    370.51    371.67    371.67    370.38    370.90    370.90    370.90       N/A
+
+SUM device_to_device_memcpy_read_ce 20785.58
+```
 
 
 
