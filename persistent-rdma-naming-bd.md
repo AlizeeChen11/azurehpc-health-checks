@@ -39,13 +39,13 @@ for old_device in $(ibdev2netdev -v | sort -n | cut -f2 -d' '); do
 	if [ "$link_layer" = "InfiniBand" ]; then
 		
 	#	$rdma_rename $old_device NAME_FIXED mlx5_ib${ib_index}
-    $rdma_rename $old_device NAME_FIXED mlx5_${ib_index}
+    	$rdma_rename $old_device NAME_FIXED mlx5_${ib_index}
 		ib_index=$(($ib_index + 1))
 		
 	elif [ "$link_layer" = "Ethernet" ]; then
 	
 		# $rdma_rename $old_device NAME_FIXED mlx5_an${an_index}
-    $rdma_rename $old_device NAME_FIXED mlx5_${an_index}
+		$rdma_rename $old_device NAME_FIXED mlx5_${an_index}
 		an_index=$(($an_index + 1))
 		
 	else
