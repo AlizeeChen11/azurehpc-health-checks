@@ -79,6 +79,7 @@ systemctl start azure_persistent_rdma_naming.service
 systemctl status azure_persistent_rdma_naming.service
 ```
 Once the above steps succeed, check ib device and ethernet device naming to see if it's changed: ibdev2netdev
+
 If the device is down, run command to bring all the ib device up: 
 ```
 for i in {0..7}; do sudo ip link set ib${i} up; done
